@@ -21,7 +21,7 @@
       justify-content: center;
       padding: 20px;
       position: relative;
-      overflow: hidden;
+      overflow-y: auto;
     }
 
     .bg-pattern {
@@ -238,7 +238,8 @@
 
     input[type="text"],
     input[type="code"],
-    input[type="password"] {
+    input[type="password"],
+    select {
       width: 100%;
       padding: 14px 16px 14px 45px;
       background: rgba(255, 255, 255, 0.05);
@@ -249,14 +250,145 @@
       transition: all 0.3s ease;
     }
 
-    input:focus {
+    .company-carousel {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .carousel-arrow {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(6, 115, 75, 0.4);
+      background: rgba(6, 115, 75, 0.08);
+      color: #09b073;
+      font-size: 1em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .carousel-arrow:hover:not(:disabled) {
+      background: rgba(6, 115, 75, 0.2);
+      border-color: #06734b;
+      transform: scale(1.1);
+    }
+
+    .carousel-arrow:disabled {
+      opacity: 0.25;
+      cursor: default;
+    }
+
+    .carousel-track {
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .carousel-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .company-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: rgba(6, 115, 75, 0.1);
+      border: 1.5px solid #06734b;
+      border-radius: 12px;
+      box-shadow: 0 0 0 2px rgba(6, 115, 75, 0.15);
+      user-select: none;
+    }
+
+    .company-card.slide-in-right {
+      animation: slideInRight 0.22s ease;
+    }
+
+    .company-card.slide-in-left {
+      animation: slideInLeft 0.22s ease;
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .company-card-icon {
+      font-size: 1.6em;
+      flex-shrink: 0;
+    }
+
+    .company-card-info {
+      flex: 1;
+    }
+
+    .company-card-name {
+      color: #e0e0e0;
+      font-size: 0.92em;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .company-card-rate {
+      color: #09b073;
+      font-size: 1.00em;
+      font-weight: 800;
+      margin-top: 3px;
+    }
+
+    .carousel-counter {
+      font-size: 0.78em;
+      color: #666;
+      letter-spacing: 0.5px;
+    }
+
+    .company-loading {
+      color: #888;
+      font-size: 0.9em;
+      padding: 14px;
+      text-align: center;
+      border: 1px dashed rgba(6, 115, 75, 0.3);
+      border-radius: 12px;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2388ff88' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 35px;
+    }
+
+    select option {
+      background: #0a0e0d;
+      color: #fff;
+    }
+
+    input:focus,
+    select:focus {
       outline: none;
       border-color: #06734b;
       background: rgba(255, 255, 255, 0.08);
       box-shadow: 0 0 0 3px rgba(6, 115, 75, 0.2);
     }
 
-    input:focus + .input-icon {
+    input:focus + .input-icon,
+    select:focus + .input-icon {
       color: #06734b;
     }
 
@@ -483,6 +615,19 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <label>Empresa Preferida</label>
+            <div class="carousel-track">
+              <div id="companyList" class="company-loading">⏳ Carregando empresas...</div>
+            </div>
+            <div class="carousel-nav-row">
+              <button type="button" class="carousel-arrow" id="carouselPrev" onclick="carouselNav(-1)" disabled>&#8249;</button>
+              <span class="carousel-counter" id="carouselCounter"></span>
+              <button type="button" class="carousel-arrow" id="carouselNext" onclick="carouselNav(1)" disabled>&#8250;</button>
+            </div>
+            <input type="hidden" id="registerCompany" required>
+          </div>
+
           <button type="submit" class="btn">Criar Conta</button>
           <div id="registerMessage"></div>
         </form>
@@ -495,9 +640,68 @@
   </div>
 
   <script>
-    const API_URL = 'http://192.168.0.162:8080';
+    const API_URL = 'http://192.168.0.236:8080';
+
+    let companiesData = [];
+    let carouselIndex = 0;
+
+    function renderCarousel(direction) {
+      const track = document.getElementById('companyList');
+      const counter = document.getElementById('carouselCounter');
+      const prevBtn = document.getElementById('carouselPrev');
+      const nextBtn = document.getElementById('carouselNext');
+      const hiddenInput = document.getElementById('registerCompany');
+      const company = companiesData[carouselIndex];
+
+      const slideClass = direction > 0 ? 'slide-in-right' : direction < 0 ? 'slide-in-left' : '';
+
+      track.innerHTML = `
+        <div class="company-card ${slideClass}">
+          <div class="company-card-icon">🏢</div>
+          <div class="company-card-info">
+            <div class="company-card-name">${company.company_name}</div>
+            <div class="company-card-rate">R$ ${(company.hourly_rate || 0).toFixed(2)}/hora</div>
+          </div>
+        </div>
+      `;
+
+      hiddenInput.value = company.id;
+      counter.textContent = companiesData.length > 1 ? `${carouselIndex + 1} / ${companiesData.length}` : '';
+      prevBtn.disabled = carouselIndex === 0;
+      nextBtn.disabled = carouselIndex === companiesData.length - 1;
+    }
+
+    function carouselNav(direction) {
+      const next = carouselIndex + direction;
+      if (next < 0 || next >= companiesData.length) return;
+      carouselIndex = next;
+      renderCarousel(direction);
+    }
+
+    async function loadCompanies() {
+      try {
+        const response = await fetch(`${API_URL}/companies`);
+        if (!response.ok) throw new Error('Failed to load companies');
+        companiesData = await response.json();
+
+        if (companiesData.length === 0) {
+          document.getElementById('companyList').innerHTML = '<div class="company-loading">Nenhuma empresa encontrada</div>';
+          return;
+        }
+
+        document.getElementById('carouselPrev').disabled = false;
+        document.getElementById('carouselNext').disabled = false;
+        carouselIndex = 0;
+        renderCarousel(0);
+      } catch (error) {
+        console.error('Error loading companies:', error);
+        document.getElementById('companyList').innerHTML = '<div class="company-loading">❌ Erro ao carregar empresas</div>';
+      }
+    }
+
     // GSAP Animation on load
     window.addEventListener("DOMContentLoaded", function() {
+      loadCompanies();
       gsap.to(".container", {
         opacity: 1,
         y: 0,
@@ -582,6 +786,7 @@
        const name = document.getElementById('registerName').value;
        const code = document.getElementById('registerCode').value;
        const password = document.getElementById('registerPassword').value;
+       const preferredCompanyId = document.getElementById('registerCompany').value;
        const messageDiv = document.getElementById('registerMessage');
        const submitBtn = e.target.querySelector('button[type="submit"]');
        
@@ -590,10 +795,27 @@
        submitBtn.textContent = 'Criando...';
 
        try {
+         if (!preferredCompanyId) {
+           messageDiv.textContent = '❌ Selecione uma empresa';
+           messageDiv.className = 'message error';
+           submitBtn.disabled = false;
+           submitBtn.textContent = 'Criar Conta';
+           return;
+         }
+
+         console.log(preferredCompanyId)
+
+         const body = { 
+           name, 
+           code, 
+           password,
+           preferred_company_id: parseInt(preferredCompanyId)
+         };
+
          const response = await fetch(`${API_URL}/users/register`, {
            method: 'POST',
            headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ name, code, password })
+           body: JSON.stringify(body)
          });
 
          const result = await response.json();
@@ -606,6 +828,7 @@
            document.getElementById('registerName').value = '';
            document.getElementById('registerCode').value = '';
            document.getElementById('registerPassword').value = '';
+           document.getElementById('registerCompany').value = '';
            
            // Switch to login tab after a certain amount of time
            setTimeout(() => {

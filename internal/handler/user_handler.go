@@ -2,10 +2,9 @@ package handler
 
 import (
 	"calcula_pagamento/internal/auth"
+	"calcula_pagamento/internal/middleware"
 	"calcula_pagamento/internal/model"
 	"net/http"
-
-	"calcula_pagamento/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 
@@ -24,20 +23,15 @@ func (h *UserHandler) RegisterRoutes(r *gin.Engine) {
 	r.POST("/users/login", h.Login)
 	r.POST("/users/register", h.RegisterUser)
 
-	r.GET("/verify-authenticated", middleware.AuthMiddleware(), h.VerifyAuthenticated)
-}
-
-func (h *UserHandler) VerifyAuthenticated(c *gin.Context) {
-	userID := c.MustGet("userID").(int64)
-
-	c.JSON(200, gin.H{
-		"message": "Usuário autenticado",
-		"userID":  userID,
-	})
+	api := r.Group("/users")
+	api.Use(middleware.AuthMiddleware())
+	api.GET("/me", h.GetMe)
 }
 
 func (h *UserHandler) RegisterUser(c *gin.Context) {
 	var entry model.User
+
+	println(entry.PreferredCompanyID)
 	if err := c.ShouldBindJSON(&entry); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -75,4 +69,25 @@ func (h *UserHandler) Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"token": token})
+}
+
+func (h *UserHandler) GetMe(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	user, err := h.service.GetByID(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Create a response without the password
+	response := gin.H{
+		"id":                   user.ID,
+		"name":                 user.Name,
+		"code":                 user.Code,
+		"preferred_company_id": user.PreferredCompanyID,
+		"preferred_company":    user.PreferredCompany,
+	}
+
+	c.JSON(http.StatusOK, response)
 }

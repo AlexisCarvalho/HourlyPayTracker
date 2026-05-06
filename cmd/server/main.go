@@ -4,6 +4,7 @@ import (
 	"embed"
 	"io/fs"
 	"net/http"
+	"time"
 
 	"calcula_pagamento/internal/config"
 	"calcula_pagamento/internal/handler"
@@ -29,6 +30,7 @@ func main() {
 	config.LoadEnv()
 	config.ConnectDB()
 
+	config.DB.AutoMigrate(&model.CompanyPaymentInformation{})
 	config.DB.AutoMigrate(&model.User{})
 	config.DB.AutoMigrate(&model.TimeEntry{})
 
@@ -36,7 +38,16 @@ func main() {
 	// GIN
 	// =========================
 	r := gin.Default()
-	r.Use(cors.Default())
+
+	// CORS PRIMEIRO e MÁXIMO PERMISSIVO (antes de qualquer rota ou middleware)
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization", "X-Requested-With"}
+	corsConfig.ExposeHeaders = []string{"Content-Length"}
+	corsConfig.AllowCredentials = false // false com AllowAllOrigins
+	corsConfig.MaxAge = 12 * time.Hour
+	r.Use(cors.New(corsConfig))
 
 	// =========================
 	// FRONTEND (SPA)
@@ -79,15 +90,20 @@ func main() {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
+	companyPaymentInfoRepo := repository.NewCompanyPaymentInformationRepository(config.DB)
+	companyPaymentInfoService := service.NewCompanyPaymentInformationService(companyPaymentInfoRepo)
+	companyPaymentInfoHandler := handler.NewCompanyPaymentInformationHandler(companyPaymentInfoService)
+
 	timeEntryRepo := repository.NewTimeEntryRepository(config.DB)
 	timeEntryService := service.NewTimeEntryService(timeEntryRepo)
-	timeEntryHandler := handler.NewTimeEntryHandler(timeEntryService)
+	timeEntryHandler := handler.NewTimeEntryHandler(timeEntryService, userService)
 
 	// =========================
 	// API ENDPOINTS
 	// =========================
 
 	userHandler.RegisterRoutes(r)
+	companyPaymentInfoHandler.RegisterRoutes(r)
 	timeEntryHandler.RegisterRoutes(r)
 
 	// =========================

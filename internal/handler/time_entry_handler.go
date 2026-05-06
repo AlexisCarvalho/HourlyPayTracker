@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -13,15 +12,16 @@ import (
 )
 
 type TimeEntryHandler struct {
-	service service.TimeEntryService
+	service     service.TimeEntryService
+	userService service.UserService
 }
 
 type BulkMarkRequest struct {
 	IDs []uint `json:"ids"`
 }
 
-func NewTimeEntryHandler(s service.TimeEntryService) *TimeEntryHandler {
-	return &TimeEntryHandler{service: s}
+func NewTimeEntryHandler(s service.TimeEntryService, u service.UserService) *TimeEntryHandler {
+	return &TimeEntryHandler{service: s, userService: u}
 }
 
 func (h *TimeEntryHandler) RegisterRoutes(r *gin.Engine) {
@@ -35,8 +35,8 @@ func (h *TimeEntryHandler) RegisterRoutes(r *gin.Engine) {
 	api.GET("/pages/count", h.GetPagesCount)
 
 	// Operations specific by ID
+	api.GET("/:id", h.GetByID)
 	api.PUT("/:id", h.Update)
-	api.PUT("/:id/mark-paid", h.MarkAsPaid)
 
 	// Batch operations (without ID)
 	api.PUT("/mark-paid", h.MarkMultipleAsPaid)
@@ -65,6 +65,22 @@ func (h *TimeEntryHandler) CreateTimeEntry(c *gin.Context) {
 
 	entry.IdUser = userID
 
+	// If CompanyPaymentInfoID is not provided, use user's preferred company
+	if entry.CompanyPaymentInfoID == 0 {
+		user, err := h.userService.GetByID(userID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch user data"})
+			return
+		}
+
+		if user.PreferredCompanyID != nil {
+			entry.CompanyPaymentInfoID = *user.PreferredCompanyID
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "no preferred company set and none provided"})
+			return
+		}
+	}
+
 	if err := h.service.RegisterTime(&entry); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -73,20 +89,40 @@ func (h *TimeEntryHandler) CreateTimeEntry(c *gin.Context) {
 	c.JSON(http.StatusCreated, entry)
 }
 
-func (h *TimeEntryHandler) MarkAsPaid(c *gin.Context) {
+func (h *TimeEntryHandler) GetByID(c *gin.Context) {
+	userIDValue, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not authenticated"})
+		return
+	}
+
+	userID, ok := userIDValue.(uint)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id type"})
+		return
+	}
+
 	idParam := c.Param("id")
-	var id uint
-	if _, err := fmt.Sscanf(idParam, "%d", &id); err != nil {
+	idParsed, err := strconv.ParseUint(idParam, 10, 64)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
 		return
 	}
+	id := uint(idParsed)
 
-	if err := h.service.MarkAsPaid(id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	entry, err := h.service.GetByID(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "entry not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "marked as paid"})
+	// Verify that the entry belongs to the authenticated user
+	if entry.IdUser != userID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "not authorized to access this entry"})
+		return
+	}
+
+	c.JSON(http.StatusOK, entry)
 }
 
 func (h *TimeEntryHandler) Update(c *gin.Context) {

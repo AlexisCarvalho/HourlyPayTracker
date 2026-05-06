@@ -9,6 +9,7 @@ import (
 type UserRepository interface {
 	Create(entry *model.User) error
 	FindByCode(code string) (*model.User, error)
+	FindByID(id uint) (*model.User, error)
 }
 
 type userRepo struct {
@@ -25,7 +26,16 @@ func (r *userRepo) Create(entry *model.User) error {
 
 func (r *userRepo) FindByCode(code string) (*model.User, error) {
 	var user model.User
-	result := r.db.Where("code = ?", code).First(&user)
+	result := r.db.Preload("PreferredCompany").Where("code = ?", code).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func (r *userRepo) FindByID(id uint) (*model.User, error) {
+	var user model.User
+	result := r.db.Preload("PreferredCompany").First(&user, id)
 	if result.Error != nil {
 		return nil, result.Error
 	}

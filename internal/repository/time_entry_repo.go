@@ -14,6 +14,7 @@ type TimeEntryRepository interface {
 	Delete(ids []uint) error
 	MarkAsPaid(id uint) error
 	MarkMultipleAsPaid(ids []uint) error
+	GetByID(id uint) (*model.TimeEntry, error)
 	GetDurations(idUser uint, paid bool, desc bool, limit int, page int) ([]model.TimeEntryDuration, error)
 	GetDurationsMonth(idUser uint, year int, month int) ([]model.TimeEntryDurationMonth, error)
 	Update(entry *model.TimeEntry) error
@@ -47,6 +48,17 @@ func (r *timeEntryRepo) Delete(ids []uint) error {
 		Delete("id IN ?", ids).Error
 }
 
+func (r *timeEntryRepo) GetByID(id uint) (*model.TimeEntry, error) {
+	var entry model.TimeEntry
+	err := r.db.
+		Preload("CompanyPaymentInfo").
+		First(&entry, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &entry, nil
+}
+
 // Get the durations, if limit = -1 offset will be as well
 func (r *timeEntryRepo) GetDurations(idUser uint, paid bool, desc bool, limit int, page int) ([]model.TimeEntryDuration, error) {
 	var offset int
@@ -59,6 +71,7 @@ func (r *timeEntryRepo) GetDurations(idUser uint, paid bool, desc bool, limit in
 
 	var entries []model.TimeEntry
 	err := r.db.
+		Preload("CompanyPaymentInfo").
 		Where("id_user = ? AND paid = ?", idUser, paid).
 		Order(clause.OrderByColumn{
 			Column: clause.Column{Name: "clock_in"},
@@ -79,6 +92,11 @@ func (r *timeEntryRepo) GetDurations(idUser uint, paid bool, desc bool, limit in
 		hours := totalMinutes / 60
 		minutes := totalMinutes % 60
 
+		hourlyRate := 0.0
+		if entry.CompanyPaymentInfo != nil {
+			hourlyRate = entry.CompanyPaymentInfo.HourlyRate
+		}
+
 		results = append(results, model.TimeEntryDuration{
 			ID:                   entry.ID,
 			ClockIn:              entry.ClockIn,
@@ -86,6 +104,7 @@ func (r *timeEntryRepo) GetDurations(idUser uint, paid bool, desc bool, limit in
 			TotalDurationMinutes: totalMinutes,
 			Hours:                hours,
 			Minutes:              minutes,
+			HourlyRate:           hourlyRate,
 		})
 	}
 
@@ -104,6 +123,7 @@ func (r *timeEntryRepo) GetDurationsMonth(idUser uint, year int, month int) ([]m
 
 	var entries []model.TimeEntry
 	if err := r.db.
+		Preload("CompanyPaymentInfo").
 		Where("id_user = ? AND clock_in >= ? AND clock_in < ?", idUser, start, end).
 		Order("clock_in ASC").
 		Find(&entries).Error; err != nil {
@@ -119,6 +139,11 @@ func (r *timeEntryRepo) GetDurationsMonth(idUser uint, year int, month int) ([]m
 		hours := totalMinutes / 60
 		minutes := totalMinutes % 60
 
+		hourlyRate := 0.0
+		if entry.CompanyPaymentInfo != nil {
+			hourlyRate = entry.CompanyPaymentInfo.HourlyRate
+		}
+
 		results = append(results, model.TimeEntryDurationMonth{
 			ID:                   entry.ID,
 			ClockIn:              entry.ClockIn,
@@ -127,6 +152,7 @@ func (r *timeEntryRepo) GetDurationsMonth(idUser uint, year int, month int) ([]m
 			Hours:                hours,
 			Minutes:              minutes,
 			Paid:                 entry.Paid,
+			HourlyRate:           hourlyRate,
 		})
 	}
 
@@ -145,10 +171,11 @@ func (r *timeEntryRepo) Update(entry *model.TimeEntry) error {
 
 	// Update all fields except ID and CreatedAt
 	return r.db.Model(&existing).Updates(map[string]interface{}{
-		"clock_in":  entry.ClockIn,
-		"clock_out": entry.ClockOut,
-		"paid":      entry.Paid,
-		"id_user":   entry.IdUser,
+		"clock_in":                entry.ClockIn,
+		"clock_out":               entry.ClockOut,
+		"paid":                    entry.Paid,
+		"id_user":                 entry.IdUser,
+		"company_payment_info_id": entry.CompanyPaymentInfoID,
 	}).Error
 }
 

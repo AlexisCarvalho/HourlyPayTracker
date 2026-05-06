@@ -11,6 +11,7 @@ type TimeEntryService interface {
 	Delete(ids []uint) error
 	MarkAsPaid(id uint) error
 	MarkMultipleAsPaid(ids []uint) error
+	GetByID(id uint) (*model.TimeEntry, error)
 	GetDurations(idUser uint, paid bool, desc bool, limit int, page int) ([]model.TimeEntryDuration, error)
 	GetDurationsMonth(idUser uint, year int, month int) ([]model.TimeEntryDurationMonth, error)
 	Update(entry *model.TimeEntry) error
@@ -48,6 +49,10 @@ func (s *timeEntryService) Delete(ids []uint) error {
 		return errors.New("no IDs provided")
 	}
 	return s.repo.Delete(ids)
+}
+
+func (s *timeEntryService) GetByID(id uint) (*model.TimeEntry, error) {
+	return s.repo.GetByID(id)
 }
 
 func (s *timeEntryService) GetDurations(idUser uint, paid bool, desc bool, limit int, page int) ([]model.TimeEntryDuration, error) {

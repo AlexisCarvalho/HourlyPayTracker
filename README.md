@@ -19,4 +19,4 @@ The app provides an intuitive interface to log entries, visualize unpaid/paid st
 - **Paginated Tables**: Separate tables for unpaid ("Falta Pagar") and paid ("Pagos") entries, sortable by ID/date, with bulk actions.
 - **Responsive Design**: GSAP animations, mobile-optimized (FAB logout, pill buttons), backdrop blur, gradients; works on desktop/tablet/mobile.
 - **Modals**: Edit entries, view day-specific logs, received results with diff analysis (success/warn/error tones).
-- **Deployment:**: Single Go binary contains both frontend (embedded static files) and backend API. Run go run main.go to serve on :8080.
+- **Deployment**: Single Go binary contains both frontend (embedded static files) and backend API. Run go run main.go to serve on :8080.

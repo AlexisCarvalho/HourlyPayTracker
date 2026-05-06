@@ -195,6 +195,39 @@
       cursor: pointer;
     }
 
+    select {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(6, 115, 75, 0.3);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2388ff88' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 35px;
+    }
+
+    select option {
+      background: #0a0e0d;
+      color: #fff;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #06734b;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(6, 115, 75, 0.2);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2388ff88' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 35px;
+    }
+
     .checkbox-wrapper {
       display: flex;
       align-items: center;
@@ -443,11 +476,13 @@
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(6, 115, 75, 0.18);
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 14px 16px;
+      flex: 1;
       min-width: 220px;
       box-shadow: 0 6px 18px rgba(0,0,0,0.25);
       display: flex;
       flex-direction: column;
+      justify-content: center;
       gap: 6px;
     }
 
@@ -456,6 +491,7 @@
       color: #09b073;
       font-size: 0.9em;
       font-weight: 600;
+      letter-spacing: 0.3px;
     }
 
     .rate-box label {
@@ -463,6 +499,7 @@
       font-size: 0.8em;
       margin: 0;
       text-transform: none;
+      letter-spacing: 0;
     }
 
     .rate-box input[type="number"] {
@@ -473,6 +510,7 @@
       border-radius: 8px;
       color: #fff;
       font-size: 1em;
+      font-family: inherit;
     }
 
     .received-row {
@@ -484,16 +522,85 @@
     .received-row input[type="number"] { flex: 1; }
 
     .received-btn {
-      padding: 10px 12px;
+      padding: 10px 14px;
       border-radius: 8px;
       background: linear-gradient(135deg, #06734b 0%, #055a3c 100%);
       border: 1px solid #055a3c;
       color: #fff;
+      font-family: inherit;
+      font-size: 0.9em;
+      font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
     }
 
     .received-btn:active { transform: translateY(1px); }
+
+    /* User profile card inside rate-inputs */
+    .profile-box {
+      flex-direction: row !important;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 14px !important;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #06734b, #09b073);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4em;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(6, 115, 75, 0.25);
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .profile-company {
+      color: #09b073;
+      font-size: 0.9em;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+      letter-spacing: 0.3px;
+      max-width: 100%;
+    }
+
+    .profile-name {
+      color: #e0e0e0;
+      font-size: 0.9em;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.3px;
+      max-width: 100%;
+    }
+
+    .profile-code {
+      color: #666;
+      font-size: 0.8em;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
 
     .message {
       margin-top: 15px;
@@ -957,6 +1064,20 @@
       .monthly-grid-inline {
         grid-template-columns: 1fr;
       }
+      
+      .rate-inputs {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .rate-box {
+        min-width: unset;
+        width: 100%;
+      }
+
+      .profile-box {
+        padding: 12px 14px;
+      }
     }
 
     /* Print styles */
@@ -1069,6 +1190,115 @@
     #viewDayModalBody, #receivedModalBody {
       padding-right: 12px;
     }
+
+    /* Company carousel */
+    .company-carousel {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .carousel-arrow {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(6, 115, 75, 0.4);
+      background: rgba(6, 115, 75, 0.08);
+      color: #09b073;
+      font-size: 1.1em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      user-select: none;
+      line-height: 1;
+    }
+
+    .carousel-arrow:hover:not(:disabled) {
+      background: rgba(6, 115, 75, 0.2);
+      border-color: #06734b;
+      transform: scale(1.1);
+    }
+
+    .carousel-arrow:disabled {
+      opacity: 0.25;
+      cursor: default;
+    }
+
+    .carousel-track {
+      flex: 1;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .company-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 15px;
+      background: rgba(6, 115, 75, 0.1);
+      border: 1.5px solid #06734b;
+      border-radius: 12px;
+      box-shadow: 0 0 0 2px rgba(6, 115, 75, 0.15);
+    }
+
+    .company-card.slide-in-right { animation: slideInRight 0.22s ease; }
+    .company-card.slide-in-left  { animation: slideInLeft  0.22s ease; }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .company-card-icon { font-size: 1.4em; flex-shrink: 0; }
+
+    .company-card-info { flex: 1; min-width: 0; }
+
+    .company-card-name {
+      color: #e0e0e0;
+      font-size: 0.88em;
+      font-weight: 600;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .company-card-rate {
+      color: #09b073;
+      font-size: 1.00em;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+
+    .carousel-counter {
+      font-size: 0.76em;
+      color: #555;
+      letter-spacing: 0.5px;
+    }
+
+    .carousel-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .company-loading-inline {
+      color: #888;
+      font-size: 0.88em;
+      padding: 13px;
+      text-align: center;
+      border: 1px dashed rgba(6, 115, 75, 0.3);
+      border-radius: 12px;
+    }
   </style>
 </head>
 <body>
@@ -1111,11 +1341,6 @@
         <h2 class="card-title">Valores e Pagamento</h2>
         <div class="hourly-rate-text">
           <div class="rate-inputs">
-            <div class="rate-box" aria-labelledby="hourlyLabel">
-              <h3 id="hourlyLabel">Valor Hora (R$)</h3>
-              <label for="hourlyRate">Defina o valor por hora</label>
-              <input type="number" id="hourlyRate" min="0" step="0.01" value="8">
-            </div>
 
             <div class="rate-box" aria-labelledby="receivedLabel">
               <h3 id="receivedLabel">Valor Recebido (R$)</h3>
@@ -1125,6 +1350,16 @@
                 <button id="receivedBtn" type="button" class="received-btn">OK</button>
               </div>
             </div>
+
+            <div class="rate-box profile-box" id="userProfileBox">
+              <div class="profile-avatar" id="profileAvatar">?</div>
+              <div class="profile-info">
+                <div class="profile-company" id="profileCompany">🏢 —</div>
+                <div class="profile-name" id="profileName">—</div>
+                <div class="profile-code" id="profileCode">Código: —</div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -1141,6 +1376,19 @@
           <div class="form-group">
             <label>Saída</label>
             <input type="datetime-local" id="clockOut" required>
+          </div>
+
+          <div class="form-group">
+            <label>Empresa</label>
+            <div class="carousel-track">
+              <div id="formCompanyCard" class="company-loading-inline">⏳ Carregando...</div>
+            </div>
+            <div class="carousel-nav-row">
+              <button type="button" class="carousel-arrow" id="formCarouselPrev" disabled>&#8249;</button>
+              <span class="carousel-counter" id="formCarouselCounter"></span>
+              <button type="button" class="carousel-arrow" id="formCarouselNext" disabled>&#8250;</button>
+            </div>
+            <input type="hidden" id="timeFormCompany" required>
           </div>
 
           <div class="form-group">
@@ -1191,7 +1439,7 @@
               <th style="width: 60px;">ID</th>
               <th>Entrada</th>
               <th>Saída</th>
-              <th style="width: 100px;">Total Min</th>
+              <th style="width: 100px;">Valor Hora</th>
               <th style="width: 80px;">Horas</th>
               <th style="width: 80px;">Minutos</th>
               <th style="width: 100px;">Valor</th>
@@ -1225,7 +1473,7 @@
               <th style="width: 60px;">ID</th>
               <th>Entrada</th>
               <th>Saída</th>
-              <th style="width: 100px;">Total Min</th>
+              <th style="width: 100px;">Valor Hora</th>
               <th style="width: 80px;">Horas</th>
               <th style="width: 80px;">Minutos</th>
               <th style="width: 100px;">Valor</th>
@@ -1296,6 +1544,12 @@
             <input type="datetime-local" id="editClockOut" required>
           </div>
           <div class="form-group">
+            <label>Empresa</label>
+            <select id="editCompany" required style="width: 100%; padding: 14px 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(6, 115, 75, 0.3); border-radius: 12px; color: #fff; font-size: 1em; cursor: pointer; appearance: none;">
+              <option value="">Carregando empresas...</option>
+            </select>
+          </div>
+          <div class="form-group">
             <div class="checkbox-wrapper">
               <input type="checkbox" id="editPaid">
               <label for="editPaid">Marcar Como Pago</label>
@@ -1311,7 +1565,7 @@
   </div>
 
   <script>
-    const API_URL = 'http://192.168.0.162:8080';
+    const API_URL = 'http://192.168.0.236:8080';
     
     // Pagination state
     let unpaidCurrentPage = 1;
@@ -1328,7 +1582,8 @@
     let currentCalendarYear = new Date().getFullYear();
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('authToken'); // Remove authtoken from storage when logged out
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userProfile'); // Clear cached profile on logout
       window.location.href = '/account';
     });
 
@@ -1400,10 +1655,13 @@
     });
 
     async function firstLoad() {
+      // Load user profile first (sets preferred company in localStorage + renders profile card)
+      await loadUserProfile();
+
+      // Load companies first
+      await loadCompanies();
+
       // Month Based
-      // Awaits to allow time for the function to load information into the cache,
-      // so that when calculateMonthlySummary is called, it doesn't need to call the API
-      // for the already-loaded month.
       await renderCalendar();
       calculateMonthlySummary();
       
@@ -1411,6 +1669,135 @@
       loadUnpaidEntries();
       updatePaidTotalPages();
       loadPaidEntries();
+    }
+
+    // Load and cache user profile (including preferred_company_id)
+    async function loadUserProfile() {
+      try {
+        const cached = localStorage.getItem('userProfile');
+        const profile = cached ? JSON.parse(cached) : null;
+
+        if (!profile) {
+          const response = await authFetch(`${API_URL}/users/me`);
+          if (!response.ok) { console.error('Failed to load user profile'); return null; }
+          const fetched = await response.json();
+          localStorage.setItem('userProfile', JSON.stringify(fetched));
+          renderProfileCard(fetched);
+          return fetched;
+        }
+
+        renderProfileCard(profile);
+        return profile;
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+        return null;
+      }
+    }
+
+    function renderProfileCard(profile) {
+      if (!profile) return;
+      const nameEl   = document.getElementById('profileName');
+      const codeEl   = document.getElementById('profileCode');
+      const compEl   = document.getElementById('profileCompany');
+      const avatarEl = document.getElementById('profileAvatar');
+      if (nameEl)   nameEl.textContent   = profile.name || '—';
+      if (codeEl)   codeEl.textContent   = `Código: ${profile.code || '—'}`;
+      if (compEl)   compEl.textContent   = profile.preferred_company
+                      ? `🏢 ${profile.preferred_company.company_name}`
+                      : '🏢 —';
+      if (avatarEl) avatarEl.textContent = profile.name
+                      ? profile.name.charAt(0).toUpperCase()
+                      : '?';
+    }
+
+    // Load companies and populate all select elements
+    let companiesData = [];
+    let formCarouselIndex = 0;
+
+    function renderFormCarousel(direction) {
+      const track = document.getElementById('formCompanyCard');
+      const counter = document.getElementById('formCarouselCounter');
+      const prevBtn = document.getElementById('formCarouselPrev');
+      const nextBtn = document.getElementById('formCarouselNext');
+      const hiddenInput = document.getElementById('timeFormCompany');
+      const company = companiesData[formCarouselIndex];
+
+      const slideClass = direction > 0 ? 'slide-in-right' : direction < 0 ? 'slide-in-left' : '';
+
+      track.outerHTML; // flush
+      track.innerHTML = ''; // won't work on outerHTML — use wrapper approach below
+      const newCard = document.createElement('div');
+      newCard.className = `company-card ${slideClass}`;
+      newCard.innerHTML = `
+        <div class="company-card-icon">🏢</div>
+        <div class="company-card-info">
+          <div class="company-card-name">${company.company_name}</div>
+          <div class="company-card-rate">R$ ${(company.hourly_rate || 0).toFixed(2)}/hora</div>
+        </div>
+      `;
+      track.replaceChildren(newCard);
+
+      hiddenInput.value = company.id;
+      counter.textContent = companiesData.length > 1 ? `${formCarouselIndex + 1} / ${companiesData.length}` : '';
+      prevBtn.disabled = formCarouselIndex === 0;
+      nextBtn.disabled = formCarouselIndex === companiesData.length - 1;
+    }
+
+    document.getElementById('formCarouselPrev').addEventListener('click', () => {
+      if (formCarouselIndex > 0) { formCarouselIndex--; renderFormCarousel(-1); }
+    });
+    document.getElementById('formCarouselNext').addEventListener('click', () => {
+      if (formCarouselIndex < companiesData.length - 1) { formCarouselIndex++; renderFormCarousel(1); }
+    });
+
+    async function loadCompanies() {
+      try {
+        const response = await authFetch(`${API_URL}/companies`);
+        if (!response.ok) {
+          console.error('Failed to load companies');
+          return;
+        }
+        companiesData = await response.json();
+
+        // Get preferred company id from cached profile
+        const profile = JSON.parse(localStorage.getItem('userProfile') || 'null');
+        const preferredId = profile?.preferred_company_id ?? null;
+
+        // Populate carousel (Novo Registro) — pre-select preferred company
+        if (companiesData.length > 0) {
+          const preferredIdx = preferredId !== null
+            ? companiesData.findIndex(c => c.id === preferredId)
+            : -1;
+          formCarouselIndex = preferredIdx >= 0 ? preferredIdx : 0;
+
+          document.getElementById('formCarouselPrev').disabled = false;
+          document.getElementById('formCarouselNext').disabled = false;
+          renderFormCarousel(0);
+        } else {
+          document.getElementById('formCompanyCard').textContent = 'Nenhuma empresa encontrada';
+        }
+
+        // Populate edit modal select — pre-select preferred company
+        const editSelect = document.getElementById('editCompany');
+        if (editSelect) {
+          editSelect.innerHTML = '';
+          companiesData.forEach(company => {
+            const option = document.createElement('option');
+            option.value = company.id;
+            option.textContent = `${company.company_name} (R$ ${(company.hourly_rate || 0).toFixed(2)}/h)`;
+            editSelect.appendChild(option);
+          });
+          if (preferredId !== null) {
+            editSelect.value = preferredId;
+          } else if (companiesData.length > 0) {
+            editSelect.value = companiesData[0].id;
+          }
+        }
+
+      } catch (error) {
+        console.error('Error loading companies:', error);
+        document.getElementById('formCompanyCard').textContent = '❌ Erro ao carregar empresas';
+      }
     }
 
     // helper to perform authenticated fetch
@@ -1452,6 +1839,7 @@
       const clockIn = document.getElementById("clockIn").value;
       const clockOut = document.getElementById("clockOut").value;
       const paid = document.getElementById("paid").checked;
+      const companyPaymentInfoId = document.getElementById("timeFormCompany").value;
       const messageDiv = document.getElementById("message");
       messageDiv.textContent = "";
 
@@ -1462,7 +1850,8 @@
           body: JSON.stringify({
             clock_in: new Date(clockIn).toISOString(),
             clock_out: new Date(clockOut).toISOString(),
-            paid: paid
+            paid: paid,
+            company_payment_info_id: parseInt(companyPaymentInfoId)
           })
         });
 
@@ -1471,18 +1860,12 @@
           messageDiv.textContent = "✅ Entrada Salva!";
           messageDiv.className = "message success";
 
-          // Update only what changes
           monthlyDataCache.clear();
           await renderCalendar();
-
-          if(paid) {
-            calculateMonthlySummary();
-
-            updatePaidTotalPages();
-            loadPaidEntries();
-          } else {
-            loadUnpaidEntries();
-          }
+          calculateMonthlySummary();
+          loadUnpaidEntries();
+          updatePaidTotalPages();
+          loadPaidEntries();
         } else {
           messageDiv.textContent = "❌ Error: " + result.error;
           messageDiv.className = "message error";
@@ -1492,18 +1875,6 @@
         messageDiv.className = "message error";
       }
     });
-
-    // Get current hourly rate from input (defaults to 8)
-    function getHourlyRate() {
-      const v = document.getElementById('hourlyRate').value;
-      try {
-        const d = new Decimal(v || '8');
-        if (!d.isFinite() || d.lte(0)) return new Decimal(8);
-        return d;
-      } catch (e) {
-        return new Decimal(8);
-      }
-    }
 
     // Debugging helper: compare exact sum vs sum of rounded-displayed values
     function warnIfRoundingLoss(exactSum, perRowDecimals, context) {
@@ -1516,13 +1887,6 @@
         console.warn('[Rounding check] failed:', e);
       }
     }
-
-    // Recalculate when hourly rate changes
-    document.getElementById('hourlyRate').addEventListener('input', function() {
-      loadUnpaidEntries();
-      loadPaidEntries();
-      calculateMonthlySummary();
-    });
     
     // Handle Received OK click: compute cumulative and show modal
     document.getElementById('receivedBtn').addEventListener('click', handleReceived);
@@ -1556,15 +1920,13 @@
         return;
       }
 
-      const hourlyRate = getHourlyRate();
-
       // Map entries to enriched objects and keep original order
       const entries = data.map(e => {
         const clockIn = new Date(e.clock_in);
         const clockOut = new Date(e.clock_out);
         const dateLabel = `${clockIn.toLocaleDateString()} ${clockIn.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}→${clockOut.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}`;
         const minutesDec = new Decimal(e.total_duration_minutes);
-        const value = minutesDec.times(hourlyRate.div(60));
+        const value = minutesDec.times(new Decimal(e.hourly_rate).div(60));
         return {
           id: e.id,
           dateLabel,
@@ -1712,11 +2074,27 @@
       return local.toISOString().slice(0,16);
     }
 
-    function showEditModal(entry, dateKey) {
+    async function showEditModal(entry, dateKey) {
+      // Fetch the full entry to get paid status and company_payment_info_id
+      try {
+        const resp = await authFetch(`${API_URL}/time-entry/${entry.id}`);
+        if (resp.ok) {
+          entry = await resp.json();
+        }
+      } catch(e) {
+        console.warn('Could not fetch full entry, using partial data:', e);
+      }
+
       document.getElementById('editId').value = entry.id;
       document.getElementById('editClockIn').value = toLocalDatetimeInputValue(entry.clock_in);
       document.getElementById('editClockOut').value = toLocalDatetimeInputValue(entry.clock_out);
       document.getElementById('editPaid').checked = !!entry.paid;
+      
+      // Set the company
+      if (entry.company_payment_info_id) {
+        document.getElementById('editCompany').value = entry.company_payment_info_id;
+      }
+      
       // Store the dateKey if it was passed (coming from day editing)
       if (dateKey) {
         document.getElementById('editModal').dataset.returnDateKey = dateKey;
@@ -1741,6 +2119,7 @@
       const clockInVal = document.getElementById('editClockIn').value;
       const clockOutVal = document.getElementById('editClockOut').value;
       const paid = document.getElementById('editPaid').checked;
+      const companyPaymentInfoId = document.getElementById('editCompany').value;
       const returnDateKey = document.getElementById('editModal').dataset.returnDateKey;
 
       if (!clockInVal || !clockOutVal) {
@@ -1764,7 +2143,8 @@
             body: JSON.stringify({
               clock_in: new Date(clockInVal).toISOString(),
               clock_out: new Date(clockOutVal).toISOString(),
-              paid: paid
+              paid: paid,
+              company_payment_info_id: parseInt(companyPaymentInfoId)
             })
           });
           const result = await response.json();
@@ -1773,18 +2153,12 @@
             document.getElementById('editModalTitle').textContent = 'Editar Entrada';
             document.getElementById('saveEditBtn').textContent = 'Salvar';
             
-            // Update only what changes
             monthlyDataCache.clear();
             await renderCalendar();
-
-            if(paid) {
-              calculateMonthlySummary();
-
-              updatePaidTotalPages();
-              loadPaidEntries();
-            } else {
-              loadUnpaidEntries();
-            }
+            calculateMonthlySummary();
+            loadUnpaidEntries();
+            updatePaidTotalPages();
+            loadPaidEntries();
             // Return to day view if it was a new entry from day modal
             if (returnDateKey) {
               setTimeout(() => showDayEntries(returnDateKey), 300);
@@ -1800,22 +2174,18 @@
             body: JSON.stringify({
               clock_in: new Date(clockInVal).toISOString(),
               clock_out: new Date(clockOutVal).toISOString(),
-              paid: paid
+              paid: paid,
+              company_payment_info_id: parseInt(companyPaymentInfoId)
             })
           });
           const resj = await resp.json();
           if (resp.ok) {
-            // Update only what changes
             monthlyDataCache.clear();
             await renderCalendar();
-
-            if(paid) {
-              calculateMonthlySummary();
-
-              loadPaidEntries();
-            } else {
-              loadUnpaidEntries();
-            }
+            calculateMonthlySummary();
+            loadUnpaidEntries();
+            updatePaidTotalPages();
+            loadPaidEntries();
             // Return to day view if it was editing from day modal
             if (returnDateKey) {
               showDayEntries(returnDateKey);
@@ -1858,17 +2228,12 @@
         if (response.ok) {
           selectedMessage.textContent = `✅ ${result.count} Registro Marcado como Pago!`;
           selectedMessage.className = "message success";
-          // Update only what changes
           monthlyDataCache.clear();
           await renderCalendar();
-
-          if(paid) {
-            calculateMonthlySummary();
-
-            loadPaidEntries();
-          } else {
-            loadUnpaidEntries();
-          }
+          calculateMonthlySummary();
+          loadUnpaidEntries();
+          updatePaidTotalPages();
+          loadPaidEntries();
         } else {
           selectedMessage.textContent = "❌ Error: " + result.error;
           selectedMessage.className = "message error";
@@ -1906,10 +2271,9 @@
         if (response.ok) {
           selectedMessage.textContent = `✅ ${selectedIds.length} Registro(s) Removido(s)!`;
           selectedMessage.className = "message success";
-          // Update only what changes
           monthlyDataCache.clear();
           await renderCalendar();
-
+          calculateMonthlySummary();
           loadUnpaidEntries();
         } else {
           selectedMessage.textContent = "❌ Error: " + result.error;
@@ -1990,12 +2354,16 @@
         }
 
          let cumulative = new Decimal(0);
-
-         const hourlyRate = getHourlyRate();
+         let total_time_worked = new Decimal(0);
 
          data.forEach((entry, index) => {
-          const multiplied = new Decimal(entry.total_duration_minutes).times(hourlyRate.div(60));
+          const decimal_total_duration_minutes = new Decimal(entry.total_duration_minutes);
+
+          const multiplied = decimal_total_duration_minutes
+                                .times(new Decimal(entry.hourly_rate)
+                                .div(60));
           cumulative = cumulative.plus(multiplied);
+          total_time_worked = total_time_worked.plus(decimal_total_duration_minutes);
 
           const row = document.createElement("tr");
           row.style.opacity = "0";
@@ -2004,7 +2372,7 @@
             <td>${entry.id}</td>
             <td>${new Date(entry.clock_in).toLocaleString()}</td>
             <td>${new Date(entry.clock_out).toLocaleString()}</td>
-            <td>${entry.total_duration_minutes}</td>
+            <td>${entry.hourly_rate}</td>
             <td>${entry.hours}</td>
             <td>${entry.minutes}</td>
             <td>R$ ${multiplied.toFixed(2)}</td>
@@ -2026,7 +2394,7 @@
         // Update stats
         document.getElementById("totalEntries").textContent = data.length;
 
-        document.getElementById("totalHours").textContent = cumulative.div(getHourlyRate()).floor().toString();
+        document.getElementById("totalHours").textContent = total_time_worked.div(60).floor().toString();
         document.getElementById("totalValue").textContent = "R$ " + cumulative.toFixed(2);
 
       } catch (error) {
@@ -2066,11 +2434,11 @@
         }
 
          let cumulative = new Decimal(0);
-
-         const hourlyRate = getHourlyRate();
          
          data.forEach((entry, index) => {
-          const multiplied = new Decimal(entry.total_duration_minutes).times(hourlyRate.div(60));
+          const multiplied = new Decimal(entry.total_duration_minutes)
+                                .times(new Decimal(entry.hourly_rate)
+                                .div(60));
           cumulative = cumulative.plus(multiplied);
 
           const row = document.createElement("tr");
@@ -2080,7 +2448,7 @@
             <td>${entry.id}</td>
             <td>${new Date(entry.clock_in).toLocaleString()}</td>
             <td>${new Date(entry.clock_out).toLocaleString()}</td>
-            <td>${entry.total_duration_minutes}</td>
+            <td>${entry.hourly_rate}</td>
             <td>${entry.hours}</td>
             <td>${entry.minutes}</td>
             <td>R$ ${multiplied.toFixed(2)}</td>
@@ -2243,7 +2611,6 @@
         return null;
       }
 
-      const hourlyRate = getHourlyRate();
       let totalMinutes = new Decimal(0);
       let totalValue = new Decimal(0);
       let entries = 0;
@@ -2252,7 +2619,7 @@
       data.forEach(entry => {
         if (entry.paid === true) {
           const minutesDec = new Decimal(entry.total_duration_minutes);
-          const value = minutesDec.times(hourlyRate.div(60));
+          const value = minutesDec.times(new Decimal(entry.hourly_rate).div(60));
           totalMinutes = totalMinutes.plus(minutesDec);
           totalValue = totalValue.plus(value);
           entries += 1;
@@ -2608,17 +2975,12 @@
                 });
                 const result = await resp.json();
                 if (resp.ok) {
-                  // Update only what changes
                   monthlyDataCache.clear();
                   await renderCalendar();
-
-                  if(isPaid) {
-                    calculateMonthlySummary();
-                    updatePaidTotalPages();
-                    loadPaidEntries();
-                  } else {
-                    loadUnpaidEntries();
-                  }
+                  calculateMonthlySummary();
+                  loadUnpaidEntries();
+                  updatePaidTotalPages();
+                  loadPaidEntries();
                   showDayEntries(dateKey);
                 } else {
                   alert('Erro ao remover: ' + (result.error || JSON.stringify(result)));

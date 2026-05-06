@@ -8,6 +8,7 @@ import (
 type UserService interface {
 	RegisterUser(entry *model.User) error
 	Authenticate(code, password string) *model.User
+	GetByID(id uint) (*model.User, error)
 }
 
 type userService struct {
@@ -28,4 +29,8 @@ func (s *userService) Authenticate(code, password string) *model.User {
 		return nil
 	}
 	return user
+}
+
+func (s *userService) GetByID(id uint) (*model.User, error) {
+	return s.repo.FindByID(id)
 }

@@ -1,10 +1,10 @@
 package model
 
-import "gorm.io/gorm"
-
 type User struct {
-	gorm.Model
-	Name     string `json:"name"`
-	Code     string `json:"code" gorm:"unique"`
-	Password string `json:"password"`
+	ID                 uint                       `gorm:"primaryKey" json:"id"`
+	Name               string                     `json:"name"`
+	Code               string                     `json:"code" gorm:"unique"`
+	Password           string                     `json:"password"`
+	PreferredCompanyID *uint                      `json:"preferred_company_id"`
+	PreferredCompany   *CompanyPaymentInformation `json:"preferred_company" gorm:"foreignKey:PreferredCompanyID"`
 }
